@@ -44,6 +44,6 @@ file.readlines.each do |line|
   total2 += score(move1, winning_move(move1, me))
 end
 
-puts "Oops! total1 should be 12772, not #{total1}" if total1 != 12_772
-
-puts "Oops! total2 should be 11618, not #{total2}" if total2 != 11_618
+file.close
+puts total1
+puts total2
