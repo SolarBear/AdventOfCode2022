@@ -34,10 +34,6 @@ class DirNode < Node
 
     @size
   end
-
-  def add(node)
-    @children[node.name] = node
-  end
 end
 
 def parse_ls(lines, cwd)
@@ -45,9 +41,9 @@ def parse_ls(lines, cwd)
     arg, name = line.split(' ')
 
     if arg == 'dir'
-      cwd.add(DirNode.new(cwd, name))
+      cwd.children[name] = DirNode.new(cwd, name)
     else
-      cwd.add(FileNode.new(cwd, name, arg.to_i))
+      cwd.children[name] = FileNode.new(cwd, name, arg.to_i)
     end
   end
 end
