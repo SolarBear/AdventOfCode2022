@@ -40,7 +40,7 @@ class CPU
     x = pos % @@crt_width
     y = pos / @@crt_width
 
-    @crt[y][x] = '#' if (@register % @@crt_width).between?(x - 1, x + 1)
+    @crt[y][x] = '#' if @register >= pos % @@crt_width - 1 && @register <= pos % @@crt_width + 1
   end
 end
 
