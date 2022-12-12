@@ -71,8 +71,6 @@ class Monkey
   end
 end
 
-magic = 1
-
 def rounds(nb, monkeys_data, worry_level)
   monkeys = Array.new(monkeys_data.length) { Monkey.new(worry_level) }
   monkeys.each_index { |i| monkeys[i].load(monkeys_data[i].split("\n")) }
@@ -94,4 +92,4 @@ file = File.open('input11.txt')
 monkeys_data = file.read.split("\n\n")
 
 puts rounds(20, monkeys_data, 3) # 78678
-puts rounds(10_000, monkeys_data, 1)
+puts rounds(10_000, monkeys_data, 1) # 15333249714
