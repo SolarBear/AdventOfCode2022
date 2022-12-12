@@ -1,5 +1,6 @@
 class Monkey
-  attr_reader :inspections, :items
+  attr_reader :inspections, :items, :test
+  attr_accessor :magic
 
   def initialize(worry_level)
     @worry_level = worry_level
@@ -10,6 +11,7 @@ class Monkey
     @test_true_target = nil
     @test_false_target = nil
     @inspections = 0
+    @magic = nil
   end
 
   def perform_turn(monkeys)
@@ -44,7 +46,7 @@ class Monkey
       item *= arg
     end
 
-    item
+    item % @magic
   end
 
   def throw_item(monkey, item)
@@ -69,9 +71,14 @@ class Monkey
   end
 end
 
+magic = 1
+
 def rounds(nb, monkeys_data, worry_level)
-  monkeys = Array.new (monkeys_data.length) { Monkey.new(worry_level) }
+  monkeys = Array.new(monkeys_data.length) { Monkey.new(worry_level) }
   monkeys.each_index { |i| monkeys[i].load(monkeys_data[i].split("\n")) }
+
+  magic = monkeys.reduce(1) { |prev, monkey| prev * monkey.test }
+  monkeys.each { |m| m.magic = magic }
 
   nb.times do
     monkeys.each do |m|
@@ -87,4 +94,4 @@ file = File.open('input11.txt')
 monkeys_data = file.read.split("\n\n")
 
 puts rounds(20, monkeys_data, 3) # 78678
-# puts rounds(1_000, monkeys_data, 1)
+puts rounds(10_000, monkeys_data, 1)
