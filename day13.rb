@@ -33,7 +33,10 @@ def compare(left, right)
 end
 
 file = File.open('input13.txt')
-pairs = file.read.split("\n\n")
+text = file.read
+file.close
+
+pairs = text.split("\n\n")
 ordered = 0
 
 i = 1
@@ -49,4 +52,12 @@ end
 
 puts ordered.to_s # 5580
 
-file.close
+sorted_pairs = text.split("\n").map { |l| eval(l) }
+sorted_pairs << [[2]]
+sorted_pairs << [[6]]
+sorted_pairs = sorted_pairs.compact.sort { |left, right| compare(left, right) }.reverse.to_a
+
+first = sorted_pairs.find_index([[2]])
+second = sorted_pairs.find_index([[6]])
+
+puts ((first + 1) * (second + 1)).to_s # 26200
