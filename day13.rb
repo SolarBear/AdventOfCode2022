@@ -55,7 +55,7 @@ puts ordered.to_s # 5580
 sorted_pairs = text.split("\n").map { |l| eval(l) }
 sorted_pairs << [[2]]
 sorted_pairs << [[6]]
-sorted_pairs = sorted_pairs.compact.sort { |left, right| compare(left, right) }.reverse.to_a
+sorted_pairs = sorted_pairs.compact.sort { |left, right| -1 * compare(left, right) }.to_a
 
 first = sorted_pairs.find_index([[2]])
 second = sorted_pairs.find_index([[6]])
