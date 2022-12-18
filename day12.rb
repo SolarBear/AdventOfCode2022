@@ -63,13 +63,28 @@ graph.each_index do |row|
     node.right = graph[row][col + 1] unless col + 1 >= graph[0].length
     node.up = graph[row - 1][col] unless row <= 0
     node.down = graph[row + 1][col] unless row + 1 >= graph.length
+    node.distance = nil
   end
 end
 
 start = graph[20][0]
 endd = graph[20][148]
 
-bfs(graph, start, endd)
-puts endd.distance.to_s
+bfs(graph.dup, start, endd)
+puts endd.distance.to_s # 490
+
+min_path = nil
+all_a = graph.flatten.filter { |n| n.weight == 1 }
+
+i = 1
+all_a.each do |a_start|
+  graph.flatten.map { |n| n.distance = nil }
+
+  a_endd = graph[20][148]
+  bfs(graph, a_start, a_endd)
+  min_path = a_endd.distance if !a_endd.distance.nil? && (min_path.nil? || min_path > a_endd.distance)
+  i += 1
+end
+puts min_path.to_s # 488
 
 file.close
