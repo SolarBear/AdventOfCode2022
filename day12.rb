@@ -76,14 +76,12 @@ puts endd.distance.to_s # 490
 min_path = nil
 all_a = graph.flatten.filter { |n| n.weight == 1 }
 
-i = 1
 all_a.each do |a_start|
-  graph.flatten.map { |n| n.distance = nil }
+  graph.flatten.each { |n| n.distance = nil }
 
   a_endd = graph[20][148]
   bfs(graph, a_start, a_endd)
   min_path = a_endd.distance if !a_endd.distance.nil? && (min_path.nil? || min_path > a_endd.distance)
-  i += 1
 end
 puts min_path.to_s # 488
 
