@@ -46,44 +46,6 @@ def simul_sand(map, start)
     sand = start.dup
     pos = sand_fall(map, sand)
 
-    if pos.nil?
-      fell_off = true
-    else
-      units += 1
-      map[pos[:y]][pos[:x]] = 'O'
-    end
-  end
-
-  units
-end
-
-def sand_fall2(map, sand)
-  x = sand[:x]
-  y = sand[:y]
-
-  if y + 1 >= map.length
-    nil
-  elsif x < 0 || x >= map[0].length
-    raise "x outside bounds: #{x}"
-  elsif map[y + 1][x] == '.'
-    sand_fall(map, { x: x, y: y + 1 })
-  elsif map[y + 1][x - 1] == '.'
-    sand_fall(map, { x: x - 1, y: y + 1 })
-  elsif map[y + 1][x + 1] == '.'
-    sand_fall(map, { x: x + 1, y: y + 1 })
-  else
-    { x: x, y: y }
-  end
-end
-
-def simul_sand2(map, start)
-  units = 0
-  fell_off = false
-
-  until fell_off
-    sand = start.dup
-    pos = sand_fall2(map, sand)
-
     if pos == start
       return units + 1
     elsif pos.nil?
@@ -123,6 +85,6 @@ map = create_map(lines, 0, start[:x] * 2 + 1, min_y, max_y)
 map << Array.new(start[:x] * 2 + 1) { '.' }
 map << Array.new(start[:x] * 2 + 1) { '#' }
 
-puts simul_sand2(map, start) # 24166
+puts simul_sand(map, start) # 24166
 
 file.close
