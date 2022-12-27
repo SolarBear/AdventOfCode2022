@@ -81,6 +81,7 @@ puts simul_sand(map, start) # 793
 # Reset the whole thing
 start = { x: 500, y: 0 }
 
+# TODO this is wasteful: we should be reusing data from the first part
 map = create_map(lines, 0, start[:x] * 2 + 1, min_y, max_y)
 map << Array.new(start[:x] * 2 + 1) { '.' }
 map << Array.new(start[:x] * 2 + 1) { '#' }
