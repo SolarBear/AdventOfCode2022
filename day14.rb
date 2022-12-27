@@ -52,7 +52,46 @@ def simul_sand(map, start)
       units += 1
       map[pos[:y]][pos[:x]] = 'O'
     end
-    #puts map.map(&:join)
+  end
+
+  units
+end
+
+def sand_fall2(map, sand)
+  x = sand[:x]
+  y = sand[:y]
+
+  if y + 1 >= map.length
+    nil
+  elsif x < 0 || x >= map[0].length
+    raise "x outside bounds: #{x}"
+  elsif map[y + 1][x] == '.'
+    sand_fall(map, { x: x, y: y + 1 })
+  elsif map[y + 1][x - 1] == '.'
+    sand_fall(map, { x: x - 1, y: y + 1 })
+  elsif map[y + 1][x + 1] == '.'
+    sand_fall(map, { x: x + 1, y: y + 1 })
+  else
+    { x: x, y: y }
+  end
+end
+
+def simul_sand2(map, start)
+  units = 0
+  fell_off = false
+
+  until fell_off
+    sand = start.dup
+    pos = sand_fall2(map, sand)
+
+    if pos == start
+      return units + 1
+    elsif pos.nil?
+      fell_off = true
+    else
+      units += 1
+      map[pos[:y]][pos[:x]] = 'O'
+    end
   end
 
   units
@@ -66,15 +105,24 @@ lines = file.readlines.map do |line|
 end
 
 start = { x: 500, y: 0 }
-all_coords = lines.flatten << start
+# Gotta do this since it's an array of array of hashes!
+lines1 = lines.map { |l| l.map(&:dup) }
+all_coords = lines1.flatten << start
 min_x, max_x = all_coords.map { |c| c[:x] }.minmax
 min_y, max_y = all_coords.map { |c| c[:y] }.minmax
 all_coords.each { |c| c[:x] -= min_x; c[:y] -= min_y }
 
-map = create_map(lines, min_x, max_x, min_y, max_y)
+map = create_map(lines1, min_x, max_x, min_y, max_y)
 
-unit = simul_sand(map, start)
+puts simul_sand(map, start) # 793
 
-#puts map.map(&:join)
-puts unit
+# Reset the whole thing
+start = { x: 500, y: 0 }
+
+map = create_map(lines, 0, start[:x] * 2 + 1, min_y, max_y)
+map << Array.new(start[:x] * 2 + 1) { '.' }
+map << Array.new(start[:x] * 2 + 1) { '#' }
+
+puts simul_sand2(map, start) # 24166
+
 file.close
