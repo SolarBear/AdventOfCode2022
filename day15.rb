@@ -60,8 +60,9 @@ file.readlines.each do |line|
 
   manhattan_distance = (sensor_x - beacon_x).abs + (sensor_y - beacon_y).abs
 
-  # TODO limit y values
-  (sensor_y - manhattan_distance..sensor_y + manhattan_distance).each do |y|
+  min_y = [sensor_y - manhattan_distance, min_pos].max
+  max_y = [sensor_y + manhattan_distance, max_pos].min
+  (min_y..max_y).each do |y|
     # TODO limit x values
     x_dist = manhattan_distance - (y - sensor_y).abs
     rows[y] = merge_ranges((sensor_x - x_dist..sensor_x + x_dist), rows[y])
@@ -74,7 +75,6 @@ file.readlines.each do |line|
   end
 end
 
-puts rows[the_row]
 puts rows[the_row].first.size - beacons.filter { |b| b[:y] == the_row }.length # 5127797
 
 my_rows = rows.keep_if { |k,v| k.between?(min_pos, max_pos)}.transform_values { |v| trim_range(v, min_pos, max_pos) }
@@ -108,6 +108,9 @@ end
 
 discontinuities = my_rows.keep_if { |k,v| v != [(min_pos..max_pos)]}
 # TODO: do not do this manually from the output!
-discontinuity = discontinuities.first # 12518502636475
+# y : 2636475
+# x : 3129625
+# 3129625 * 4000000 + 2636475 = 12518502636475
+puts discontinuities.first # 12518502636475
 
 file.close
