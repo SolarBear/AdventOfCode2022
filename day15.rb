@@ -75,7 +75,7 @@ file.readlines.each do |line|
 end
 
 puts rows[the_row]
-puts rows[the_row].size - beacons.filter { |b| b[:y] == the_row }.length # 5127797
+puts rows[the_row].first.size - beacons.filter { |b| b[:y] == the_row }.length # 5127797
 
 my_rows = rows.keep_if { |k,v| k.between?(min_pos, max_pos)}.transform_values { |v| trim_range(v, min_pos, max_pos) }
 
