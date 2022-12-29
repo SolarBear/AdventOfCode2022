@@ -1,19 +1,49 @@
 file = File.open('input15.txt')
 
-rows = {}
-beacons = []
+def trim_range(ranges, min, max)
+  ranges.map { |r| Range.new([r.min, min].max, [r.max, max].min) }
+end
+
+def ranges_adjacent?(r1, r2)
+  r1.end + 1 == r2.begin
+end
+
+def ranges_overlap?(r1, r2)
+  r1.begin >= r2.begin && r1.begin <= r2.end || r1.end >= r2.begin && r1.end <= r2.end || \
+    r2.begin >= r1.begin && r2.begin <= r1.end || r2.end >= r1.begin && r2.end <= r1.end
+end
 
 def merge_ranges(r1, r2)
-  if r2.nil? || r1.cover?(r2)
+  if r2.instance_of?(Array)
+    ranges = []
+    new_range = r1
+
+    r2.each do |r|
+      if ranges_overlap?(new_range, r)
+        new_range = merge_ranges(new_range, r)
+      else
+        ranges << r
+      end
+    end
+
+    ranges << new_range
+    ranges
+  elsif r2.nil? || r1.cover?(r2)
     r1
   elsif r1.nil? || r2.cover?(r1)
     r2
-  else
+  elsif ranges_overlap?(r1, r2)
     Range.new([r1.min, r2.min].min, [r1.max, r2.max].max)
+  else
+    [r1, r2]
   end
 end
 
+rows = {}
+beacons = []
 the_row = 2_000_000
+min_pos = 0
+max_pos = 4_000_000
 
 file.readlines.each do |line|
   sensor, beacon = line.split(':')
@@ -30,12 +60,54 @@ file.readlines.each do |line|
 
   manhattan_distance = (sensor_x - beacon_x).abs + (sensor_y - beacon_y).abs
 
-  if sensor_y - manhattan_distance <= the_row && sensor_y + manhattan_distance >= the_row
-    x_dist = manhattan_distance - (the_row - sensor_y).abs
-    rows[the_row] = merge_ranges((sensor_x - x_dist..sensor_x + x_dist), rows[the_row])
+  # TODO limit y values
+  (sensor_y - manhattan_distance..sensor_y + manhattan_distance).each do |y|
+    # TODO limit x values
+    x_dist = manhattan_distance - (y - sensor_y).abs
+    rows[y] = merge_ranges((sensor_x - x_dist..sensor_x + x_dist), rows[y])
+
+    if rows[y].instance_of?(Array)
+      rows[y] = rows[y].sort { |a,b| a.begin <=> b.begin }
+    else
+      rows[y] = [rows[y]]
+    end
   end
 end
 
+puts rows[the_row]
 puts rows[the_row].size - beacons.filter { |b| b[:y] == the_row }.length # 5127797
+
+my_rows = rows.keep_if { |k,v| k.between?(min_pos, max_pos)}.transform_values { |v| trim_range(v, min_pos, max_pos) }
+
+my_rows = my_rows.transform_values do |v|
+  current = nil
+  row = []
+
+  v.size.times do |i|
+    current = v[i] if current.nil?
+
+    if i + 1 < v.length
+      nxt = v[i + 1]
+      if ranges_adjacent?(current, nxt)
+        current = (current.begin..nxt.end)
+      elsif ranges_adjacent?(nxt, current)
+        current = (nxt.begin..current.end)
+      else
+        row << current
+        current = nil
+      end
+    else # last element
+      row << current
+    end
+
+    row
+  end
+
+  row
+end
+
+discontinuities = my_rows.keep_if { |k,v| v != [(min_pos..max_pos)]}
+# TODO: do not do this manually from the output!
+discontinuity = discontinuities.first # 12518502636475
 
 file.close
