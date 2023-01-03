@@ -20,7 +20,7 @@ class Node
   end
 end
 
-def bfs(graph, start, endd)
+def bfs(graph, start)
   levels = [[start]]
   i = 0
 
@@ -70,7 +70,7 @@ end
 start = graph[20][0]
 endd = graph[20][148]
 
-bfs(graph.dup, start, endd)
+bfs(graph.dup, start)
 puts endd.distance.to_s # 490
 
 min_path = nil
@@ -80,7 +80,7 @@ all_a.each do |a_start|
   graph.flatten.each { |n| n.distance = nil }
 
   a_endd = graph[20][148]
-  bfs(graph, a_start, a_endd)
+  bfs(graph, a_start)
   min_path = a_endd.distance if !a_endd.distance.nil? && (min_path.nil? || min_path > a_endd.distance)
 end
 puts min_path.to_s # 488
